@@ -9,71 +9,43 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("api/courses")
+@RequestMapping("/api/courses")
 public class CourseController {
 
     @Autowired
     private CourseService courseService;
 
     @PostMapping("/create")
-    public ResponseEntity<Object> createCourse(@Validated @RequestBody CourseDTO courseDTO) {
-        try {
-            CourseDTO createdCourse = courseService.saveCourse(courseDTO);
-            return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
-        } catch (Exception e) {
-            // Log the exception (you can use a logger for real logging)
-            String errorMessage = "Failed to create course. Error: " + e.getMessage();
-            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<CourseDTO> createCourse(@Validated @RequestBody CourseDTO courseDTO) {
+        CourseDTO createdCourse = courseService.saveCourse(courseDTO);
+        return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
 
     @GetMapping("/getAllCourses")
-    public ResponseEntity<Object> getAllCourses() {
-        try {
-            List<CourseDTO> courses = courseService.getAllCourses();
-            if (courses.isEmpty()) {
-                return new ResponseEntity<>("No courses found.", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>(courses, HttpStatus.OK);
-        } catch (Exception e) {
-            // Log the exception
-            String errorMessage = "Failed to retrieve courses. Error: " + e.getMessage();
-            return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<List<CourseDTO>> getAllCourses() {
+        List<CourseDTO> courses = courseService.getAllCourses();
+        if (courses.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
     @GetMapping("/getCourseById/{id}")
-    public ResponseEntity<Object> getCourseById(@PathVariable int id) {
-        try {
-            Optional<CourseDTO> courseDTO = courseService.getCourseById(id);
-            if (courseDTO.isPresent()) {
-                return new ResponseEntity<>(courseDTO.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Course not found with ID: " + id, HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            // Log the exception
-            String errorMessage = "Failed to retrieve course with ID: " + id + ". Error: " + e.getMessage();
-            return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<CourseDTO> getCourseById(@PathVariable Long id) {
+        return courseService.getCourseById(id)
+                .map(courseDTO -> new ResponseEntity<>(courseDTO, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/deleteCourseById/{id}")
-    public ResponseEntity<Object> deleteCourseById(@PathVariable int id) {
-        try {
-            if (courseService.getCourseById(id).isPresent()) {
-                courseService.deleteCourseById(id);
-                return new ResponseEntity<>("Course deleted successfully.", HttpStatus.NO_CONTENT);
-            } else {
-                return new ResponseEntity<>("Course not found with ID: " + id, HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            // Log the exception
-            String errorMessage = "Failed to delete course with ID: " + id + ". Error: " + e.getMessage();
-            return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Void> deleteCourseById(@PathVariable Long id) {
+        if (courseService.getCourseById(id).isPresent()) {
+            courseService.deleteCourseById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

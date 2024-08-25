@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 @Getter
 public class CourseDTO {
-    private int id;
+    private Long id;
 
     private String name;
 
