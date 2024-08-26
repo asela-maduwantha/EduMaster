@@ -21,7 +21,7 @@ public class StudentServiceImpl implements StudentService {
         Student student  = new Student();
         student.setEmail(studentDTO.getEmail());
         student.setFirstName(studentDTO.getFirstName());
-        student.setLastName(student.getLastName());
+        student.setLastName(studentDTO.getLastName());
         student.setPassword(studentDTO.getPassword());
         student.setRole("Student");
         return student;
