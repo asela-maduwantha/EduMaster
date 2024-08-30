@@ -1,6 +1,7 @@
 package com.example.EduMaster.controller;
 
 import com.example.EduMaster.dto.CourseDTO;
+import com.example.EduMaster.dto.CourseResponseDTO;
 import com.example.EduMaster.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,14 @@ public class CourseController {
     private CourseService courseService;
 
     @PostMapping("/create")
-    public ResponseEntity<CourseDTO> createCourse(@Validated @RequestBody CourseDTO courseDTO) {
-        CourseDTO createdCourse = courseService.saveCourse(courseDTO);
+    public ResponseEntity<CourseResponseDTO> createCourse(@Validated @RequestBody CourseDTO courseDTO) {
+        CourseResponseDTO createdCourse = courseService.saveCourse(courseDTO);
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
 
     @GetMapping("/getAllCourses")
-    public ResponseEntity<List<CourseDTO>> getAllCourses() {
-        List<CourseDTO> courses = courseService.getAllCourses();
+    public ResponseEntity<List<CourseResponseDTO>> getAllCourses() {
+        List<CourseResponseDTO> courses = courseService.getAllCourses();
         if (courses.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -33,7 +34,7 @@ public class CourseController {
     }
 
     @GetMapping("/getCourseById/{id}")
-    public ResponseEntity<CourseDTO> getCourseById(@PathVariable Long id) {
+    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable Long id) {
         return courseService.getCourseById(id)
                 .map(courseDTO -> new ResponseEntity<>(courseDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

@@ -9,22 +9,24 @@ import lombok.Setter;
 import java.util.Date;
 
 @Entity
+@Table(name = "Enrollment")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Course {
+public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String name;
-
-    private String description;
     @ManyToOne
-    @JoinColumn(name = "instructor_id")
-    private Instructor instructor;
-    private int duration;
-    private Date startDate;
+    @JoinColumn(name = "student_id")
+    private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
+
+    private Date enrolledDate;
+
 }

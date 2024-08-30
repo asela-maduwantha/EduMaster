@@ -1,17 +1,14 @@
 package com.example.EduMaster.dto;
 
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import lombok.Getter;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.Date;
 
+
 @Setter
 @Getter
-public class CourseDTO {
+public class CourseResponseDTO {
     private Long id;
 
     private String name;
@@ -19,6 +16,8 @@ public class CourseDTO {
     private String description;
 
     private Long instructorId;
+
+    private String instructorName;
 
     private int duration;
 

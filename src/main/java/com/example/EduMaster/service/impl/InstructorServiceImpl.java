@@ -24,6 +24,7 @@ public class InstructorServiceImpl implements InstructorService {
         instructor.setLastName(instructorDTO.getLastName());
         instructor.setPassword(instructorDTO.getPassword());
         instructor.setNic(instructorDTO.getNic());
+        instructor.setRole("Instructor");
         return instructor;
     }
 
@@ -33,6 +34,7 @@ public class InstructorServiceImpl implements InstructorService {
         instructorDTO.setLastName(instructor.getLastName());
         instructorDTO.setEmail(instructor.getEmail());
         instructorDTO.setNic(instructor.getNic());
+        instructor.setRole(instructor.getRole());
         return instructorDTO;
     }
 

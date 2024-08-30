@@ -1,14 +1,18 @@
 package com.example.EduMaster.service.impl;
 
 import com.example.EduMaster.dto.CourseDTO;
+import com.example.EduMaster.dto.CourseResponseDTO;
 import com.example.EduMaster.entity.Course;
+import com.example.EduMaster.entity.Instructor;
 import com.example.EduMaster.repository.CourseRepository;
+import com.example.EduMaster.repository.InstructorRepository;
 import com.example.EduMaster.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -17,31 +21,36 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private InstructorRepository instructorRepository;
+
     private Course convertToEntity(@Validated CourseDTO courseDTO) {
+        Instructor instructor = instructorRepository.findById(courseDTO.getInstructorId()).orElse(null);
         Course course = new Course();
         course.setName(courseDTO.getName());
         course.setDescription(courseDTO.getDescription());
-        course.setInstructor(courseDTO.getInstructor());
+        course.setInstructor(instructor);
         course.setDuration(courseDTO.getDuration());
         course.setStartDate(courseDTO.getStartDate());
         return course;
     }
 
-    private CourseDTO convertToDTO(Course course) {
-        CourseDTO courseDTO = new CourseDTO();
-        courseDTO.setId(course.getId());
-        courseDTO.setName(course.getName());
-        courseDTO.setDescription(course.getDescription());
-        courseDTO.setInstructor(course.getInstructor());
-        courseDTO.setDuration(course.getDuration());
-        courseDTO.setStartDate(course.getStartDate());
-        return courseDTO;
+    private CourseResponseDTO convertToDTO(Course course) {
+        CourseResponseDTO courseResponseDTO = new CourseResponseDTO();
+        courseResponseDTO.setId(course.getId());
+        courseResponseDTO.setName(course.getName());
+        courseResponseDTO.setDescription(course.getDescription());
+        courseResponseDTO.setInstructorId(course.getInstructor().getId());
+        courseResponseDTO.setInstructorName(Objects.requireNonNull(instructorRepository.findById(course.getInstructor().getId()).orElse(null)).getFirstName());
+        courseResponseDTO.setDuration(course.getDuration());
+        courseResponseDTO.setStartDate(course.getStartDate());
+        return courseResponseDTO;
     }
 
 
     //creat new course
     @Override
-    public CourseDTO saveCourse(@Validated CourseDTO courseDTO) {
+    public CourseResponseDTO saveCourse(@Validated CourseDTO courseDTO) {
         Course course = convertToEntity(courseDTO);
         course = courseRepository.save(course);
         return convertToDTO(course);
@@ -49,7 +58,7 @@ public class CourseServiceImpl implements CourseService {
 
     //get all courses
     @Override
-    public List<CourseDTO> getAllCourses() {
+    public List<CourseResponseDTO> getAllCourses() {
         return courseRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .toList();
@@ -57,7 +66,7 @@ public class CourseServiceImpl implements CourseService {
 
     //get course by id
     @Override
-    public Optional<CourseDTO> getCourseById(Long id){
+    public Optional<CourseResponseDTO> getCourseById(Long id){
         return courseRepository.findById(id)
                 .map(this::convertToDTO);
     }
