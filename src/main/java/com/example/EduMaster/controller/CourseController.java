@@ -18,7 +18,7 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<CourseResponseDTO> createCourse(@Validated @RequestBody CourseDTO courseDTO) {
         CourseResponseDTO createdCourse = courseService.saveCourse(courseDTO);
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
